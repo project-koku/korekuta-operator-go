@@ -94,6 +94,8 @@ func StringReflectSpec(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostM
 
 // ReflectSpec Determine if the Status item reflects the Spec item if not empty, otherwise set a default value if applicable.
 func ReflectSpec(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostManagement, costConfig *crhchttp.CostManagementConfig) {
+	ctx := context.Background()
+	log := r.Log.WithValues("costmanagement", "ReflectSpec")
 	costConfig.APIURL, _ = StringReflectSpec(r, cost, &cost.Spec.APIURL, &cost.Status.APIURL, costmgmtv1alpha1.DefaultAPIURL)
 	costConfig.AuthenticationSecretName, _ = StringReflectSpec(r, cost, &cost.Spec.Authentication.AuthenticationSecretName, &cost.Status.Authentication.AuthenticationSecretName, "")
 
@@ -175,6 +177,11 @@ func ReflectSpec(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostManagem
 	if cost.Status.Prometheus.SkipTLSVerification == nil {
 		cost.Status.Prometheus.SkipTLSVerification = pointer.Bool(false)
 	}
+
+	if err := r.Status().Update(ctx, cost); err != nil {
+		log.Error(err, "failed to update CostManagement Status")
+	}
+
 }
 
 // GetClusterID Collects the cluster identifier from the Cluster Version custom resource object
@@ -389,7 +396,6 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		if err := r.Status().Update(ctx, cost); err != nil {
 			log.Error(err, "failed to update CostManagement Status")
 		}
-		<-ctx.Done() // wait for context to finish before continuing
 		return ctrl.Result{}, err
 	}
 
@@ -400,7 +406,6 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		if err := r.Status().Update(ctx, cost); err != nil {
 			log.Error(err, "failed to update CostManagement Status")
 		}
-		<-ctx.Done() // wait for context to finish before continuing
 		return ctrl.Result{}, err
 	}
 	cost.Status.OperatorCommit = strings.Replace(string(commit), "\n", "", -1)
@@ -495,7 +500,6 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	if err := r.Status().Update(ctx, cost); err != nil {
 		log.Error(err, "failed to update CostManagement Status")
 	}
-	// <-ctx.Done() // wait for context to finish before continuing
 
 	// Requeue for processing after 5 minutes
 	return ctrl.Result{RequeueAfter: time.Minute * 5}, nil
