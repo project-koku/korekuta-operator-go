@@ -93,9 +93,7 @@ func StringReflectSpec(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostM
 }
 
 // ReflectSpec Determine if the Status item reflects the Spec item if not empty, otherwise set a default value if applicable.
-func ReflectSpec(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostManagement, costConfig *crhchttp.CostManagementConfig) error {
-	ctx := context.Background()
-	log := r.Log.WithValues("costmanagement", "ReflectSpec")
+func ReflectSpec(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostManagement, costConfig *crhchttp.CostManagementConfig) {
 	costConfig.APIURL, _ = StringReflectSpec(r, cost, &cost.Spec.APIURL, &cost.Status.APIURL, costmgmtv1alpha1.DefaultAPIURL)
 	costConfig.AuthenticationSecretName, _ = StringReflectSpec(r, cost, &cost.Spec.Authentication.AuthenticationSecretName, &cost.Status.Authentication.AuthenticationSecretName, "")
 
@@ -177,18 +175,10 @@ func ReflectSpec(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostManagem
 	if cost.Status.Prometheus.SkipTLSVerification == nil {
 		cost.Status.Prometheus.SkipTLSVerification = pointer.Bool(false)
 	}
-
-	err := r.Status().Update(ctx, cost)
-	if err != nil {
-		log.Error(err, "Failed to update CostManagement Status")
-		return err
-	}
-	return nil
 }
 
 // GetClusterID Collects the cluster identifier from the Cluster Version custom resource object
 func GetClusterID(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostManagement, costConfig *crhchttp.CostManagementConfig) error {
-	ctx := context.Background()
 	log := r.Log.WithValues("costmanagement", "GetClusterID")
 	// Get current ClusterVersion
 	cvClient := r.cvClientBuilder.New(r)
@@ -200,11 +190,6 @@ func GetClusterID(r *CostManagementReconciler, cost *costmgmtv1alpha1.CostManage
 	if clusterVersion.Spec.ClusterID != "" {
 		cost.Status.ClusterID = string(clusterVersion.Spec.ClusterID)
 		costConfig.ClusterID = cost.Status.ClusterID
-	}
-	err = r.Status().Update(ctx, cost)
-	if err != nil {
-		log.Error(err, "Failed to update CostManagement Status")
-		return err
 	}
 	return nil
 }
@@ -362,11 +347,8 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 
 	log.Info("Reconciling custom resource", "CostManagement", cost)
 	costConfig := &crhchttp.CostManagementConfig{}
-	err = ReflectSpec(r, cost, costConfig)
-	if err != nil {
-		log.Error(err, "Failed to update CostManagement status")
-		return ctrl.Result{}, err
-	}
+	ReflectSpec(r, cost, costConfig)
+
 	if costConfig.ClusterID == "" {
 		r.cvClientBuilder = cv.NewBuilder()
 		err = GetClusterID(r, cost, costConfig)
@@ -384,16 +366,8 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		if err != nil {
 			log.Error(nil, "Failed to obtain cluster authentication token.")
 			cost.Status.Authentication.AuthenticationCredentialsFound = pointer.Bool(false)
-			err = r.Status().Update(ctx, cost)
-			if err != nil {
-				log.Error(err, "Failed to update CostManagement Status")
-			}
 		} else {
 			cost.Status.Authentication.AuthenticationCredentialsFound = pointer.Bool(true)
-			err = r.Status().Update(ctx, cost)
-			if err != nil {
-				log.Error(err, "Failed to update CostManagement Status")
-			}
 		}
 	} else if costConfig.AuthenticationSecretName != "" {
 		// Get user and password from auth secret in namespace
@@ -401,54 +375,46 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		if err != nil {
 			log.Error(nil, "Failed to obtain authentication secret credentials.")
 			cost.Status.Authentication.AuthenticationCredentialsFound = pointer.Bool(false)
-			err = r.Status().Update(ctx, cost)
-			if err != nil {
-				log.Error(err, "Failed to update CostManagement Status")
-			}
 		} else {
 			cost.Status.Authentication.AuthenticationCredentialsFound = pointer.Bool(true)
-			err = r.Status().Update(ctx, cost)
-			if err != nil {
-				log.Error(err, "Failed to update CostManagement Status")
-			}
 		}
 	} else {
 		// No authentication secret name set when using basic auth
 		cost.Status.Authentication.AuthenticationCredentialsFound = pointer.Bool(false)
-		err = r.Status().Update(ctx, cost)
-		if err != nil {
-			log.Error(err, "Failed to update CostManagement Status")
-		}
 		err = fmt.Errorf("No authentication secret name set when using basic auth.")
 	}
 	// returns if `Obtain credentials token/basic` errors
 	if err != nil {
+		log.Error(err, "Failed to obtain credentials.")
+		if err := r.Status().Update(ctx, cost); err != nil {
+			log.Error(err, "failed to update CostManagement Status")
+		}
+		<-ctx.Done() // wait for context to finish before continuing
 		return ctrl.Result{}, err
 	}
 
 	// Grab the Operator git commit and upload the status and input object with it
 	commit, err := ioutil.ReadFile("commit")
 	if err != nil {
-		fmt.Println("File reading error", err)
+		log.Error(err, "Failed to read git commit")
+		if err := r.Status().Update(ctx, cost); err != nil {
+			log.Error(err, "failed to update CostManagement Status")
+		}
+		<-ctx.Done() // wait for context to finish before continuing
 		return ctrl.Result{}, err
 	}
 	cost.Status.OperatorCommit = strings.Replace(string(commit), "\n", "", -1)
 	costConfig.OperatorCommit = cost.Status.OperatorCommit
-	err = r.Status().Update(ctx, cost)
-	if err != nil {
-		log.Error(err, "Failed to update CostManagement Status")
-	}
 
 	// Check if source is defined and should be confirmed/created
 	if costConfig.SourceName != "" && checkCycle(r.Log, costConfig.SourceCheckCycle, costConfig.LastSourceCheckTime, "source check") {
 		defined, errMsg, lastCheck, err := sources.SourceGetOrCreate(r.Log, costConfig)
+		if err != nil {
+			log.Error(err, "Failed to get or create source")
+		}
 		cost.Status.Source.SourceDefined = &defined
 		cost.Status.Source.SourceError = errMsg
 		cost.Status.Source.LastSourceCheckTime = lastCheck
-		err = r.Status().Update(ctx, cost)
-		if err != nil {
-			log.Error(err, "Failed to update CostManagement Status")
-		}
 	}
 
 	if costConfig.UploadToggle {
@@ -492,10 +458,6 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 							cost.Status.Upload.LastSuccessfulUploadTime = uploadTime
 							costConfig.LastSuccessfulUploadTime = cost.Status.Upload.LastSuccessfulUploadTime
 						}
-						err = r.Status().Update(ctx, cost)
-						if err != nil {
-							log.Error(err, "Failed to update CostManagement Status")
-						}
 					}
 				}
 			}
@@ -533,6 +495,7 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	if err := r.Status().Update(ctx, cost); err != nil {
 		log.Error(err, "failed to update CostManagement Status")
 	}
+	<-ctx.Done() // wait for context to finish before continuing
 
 	// Requeue for processing after 5 minutes
 	return ctrl.Result{RequeueAfter: time.Minute * 5}, nil
