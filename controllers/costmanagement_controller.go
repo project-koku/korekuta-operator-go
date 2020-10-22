@@ -495,7 +495,7 @@ func (r *CostManagementReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 	if err := r.Status().Update(ctx, cost); err != nil {
 		log.Error(err, "failed to update CostManagement Status")
 	}
-	<-ctx.Done() // wait for context to finish before continuing
+	// <-ctx.Done() // wait for context to finish before continuing
 
 	// Requeue for processing after 5 minutes
 	return ctrl.Result{RequeueAfter: time.Minute * 5}, nil
