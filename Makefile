@@ -5,7 +5,7 @@ UPSTREAM_LOWERCASE = kokumetricsconfig
 DOWNSTREAM_LOWERCASE = costmanagmentmetricsconfig
 UPSTREAM_HYPHEN = koku-metrics-cfg
 DOWNSTREAM_HYPHEN = cost-mgmt-metrics-cfg
-REMOVE_FILES = testutils/ config/ koku-metrics-operator/ hack/ scripts/ testing/ api/v1alpha1 collector/test_files/ collector/*_test.go controllers/test_files/ controllers/*_test.go dirconfig/test_files/ dirconfig/*_test.go packaging/test_files/ packaging/*_test.go sources/*_test.go storage/test_files/ storage/*_test.go strset/*_test.go cover.out
+REMOVE_FILES = testutils/ koku-metrics-operator/ hack/ scripts/ testing/ api/v1alpha1 collector/test_files/ collector/*_test.go controllers/test_files/ controllers/*_test.go dirconfig/test_files/ dirconfig/*_test.go packaging/test_files/ packaging/*_test.go sources/*_test.go storage/test_files/ storage/*_test.go strset/*_test.go cover.out
 
 
 # Current Operator version
@@ -324,3 +324,7 @@ sed-replace:
 	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' PROJECT
 	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' PROJECT
 	sed -i -- 's/$(UPSTREAM_HYPHEN)/$(DOWNSTREAM_HYPHEN)/g' PROJECT
+
+deploy-user-scratch: manifests kustomize
+	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/${USER}/scratchbuild:latest
+	$(KUSTOMIZE) build config/default | kubectl apply -f -
