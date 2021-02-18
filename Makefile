@@ -1,3 +1,13 @@
+# This branch is for downstream testing 
+UPSTREAM_API = KokuMetricsConfig
+DOWNSTREAM_API = CostManagementMetricsConfig
+UPSTREAM_LOWERCASE = kokumetricsconfig
+DOWNSTREAM_LOWERCASE = costmanagmentmetricsconfig
+UPSTREAM_HYPHEN = koku-metrics-cfg
+DOWNSTREAM_HYPHEN = cost-mgmt-metrics-cfg
+REMOVE_FILES = testutils/ config/ koku-metrics-operator/ hack/ scripts/ testing/ api/v1alpha1 collector/test_files/ collector/*_test.go controllers/test_files/ controllers/*_test.go dirconfig/test_files/ dirconfig/*_test.go packaging/test_files/ packaging/*_test.go sources/*_test.go storage/test_files/ storage/*_test.go strset/*_test.go cover.out
+
+
 # Current Operator version
 PREVIOUS_VERSION ?= 0.9.3
 VERSION ?= 0.9.4
@@ -280,3 +290,37 @@ test-catalog:
 # Push the test-catalog
 test-catalog-push:
 	docker push ${CATALOG_IMG}
+
+# sed replace the files to change the api 
+sed-replace:
+	rm -rf $(REMOVE_FILES)
+	# sed replace the api
+	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' api/v1beta1/*
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' api/v1beta1/*
+	sed -i -- 's/$(UPSTREAM_HYPHEN)/$(DOWNSTREAM_HYPHEN)/g' api/v1beta1/*
+	# sed replace collector
+	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' collector/*
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' collector/*
+	sed -i -- 's/$(UPSTREAM_HYPHEN)/$(DOWNSTREAM_HYPHEN)/g' collector/*
+	# sed replace controllers
+	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' controllers/*
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' controllers/*
+	sed -i -- 's/$(UPSTREAM_HYPHEN)/$(DOWNSTREAM_HYPHEN)/g' controllers/*
+	# sed replace crhchttp
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' crhchttp/*
+	# sed replace packaging 
+	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' packaging/*
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' packaging/*
+	# sed replace sources
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' sources/*
+	# sed replace storage
+	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' storage/*
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' storage/*
+	# sed replace main.go
+	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' main.go
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' main.go
+	sed -i -- 's/$(UPSTREAM_HYPHEN)/$(DOWNSTREAM_HYPHEN)/g' main.go
+	# sed replace PROJECT
+	sed -i -- 's/$(UPSTREAM_API)/$(DOWNSTREAM_API)/g' PROJECT
+	sed -i -- 's/$(UPSTREAM_LOWERCASE)/$(DOWNSTREAM_LOWERCASE)/g' PROJECT
+	sed -i -- 's/$(UPSTREAM_HYPHEN)/$(DOWNSTREAM_HYPHEN)/g' PROJECT

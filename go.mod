@@ -6,8 +6,6 @@ require (
 	github.com/go-logr/logr v0.1.0
 	github.com/google/uuid v1.1.1
 	github.com/mitchellh/mapstructure v1.1.2
-	github.com/onsi/ginkgo v1.11.0
-	github.com/onsi/gomega v1.8.1
 	github.com/openshift/api v0.0.0-20200117162508-e7ccdda6ba67
 	github.com/operator-framework/api v0.2.0
 	github.com/prometheus/client_golang v1.7.1
