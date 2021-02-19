@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - command:
-        - /home/costmanagement-metrics-operator/bin
+        - /home/costmanagement-metrics-operator/bin/costmanagement-metrics-operator
         args:
         - --enable-leader-election
         image: controller:latest

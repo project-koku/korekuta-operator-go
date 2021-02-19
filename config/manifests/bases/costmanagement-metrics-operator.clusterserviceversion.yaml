@@ -22,13 +22,13 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: KokuMetricsConfig is the Schema for the kokumetricsconfig API (Deprecated)
-      kind: KokuMetricsConfig
-      name: kokumetricsconfigs.costmanagement-metrics-cfg.openshift.io
+    - description: CostManagementMetricsConfig is the Schema for the CostManagementMetricsConfig API (Deprecated)
+      kind: CostManagementMetricsConfig
+      name: costmanagementmetricsconfigs.cost-mgmt-metrics-cfg.openshift.io
       version: v1alpha1
-    - description: KokuMetricsConfig is the Schema for the kokumetricsconfig API
-      kind: KokuMetricsConfig
-      name: kokumetricsconfigs.costmanagement-metrics-cfg.openshift.io
+    - description: CostManagementMetricsConfig is the Schema for the CostManagementMetricsConfig API
+      kind: CostManagementMetricsConfig
+      name: costmanagementmetricsconfigs.cost-mgmt-metrics-cfg.openshift.io
       version: v1beta1
   description: INSERT-DESCRIPTION
   displayName: Cost Management Metrics Operator

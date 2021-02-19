@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.3.0
   creationTimestamp: null
-  name: costmanagementmetricsconfigs.costmanagement-metrics-cfg.openshift.io
+  name: costmanagementmetricsconfigs.cost-mgmt-metrics-cfg.openshift.io
 spec:
-  group: costmanagement-metrics-cfg.openshift.io
+  group: cost-mgmt-metrics-cfg.openshift.io
   names:
     kind: CostManagementMetricsConfig
     listKind: CostManagementMetricsConfigList

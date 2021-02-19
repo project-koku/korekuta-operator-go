@@ -5,4 +5,4 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     service.beta.openshift.io/inject-cabundle: "true"
-  name: costmanagementmetricsconfigs.costmanagement-metrics-cfg.openshift.io
+  name: costmanagementmetricsconfigs.cost-mgmt-metrics-cfg.openshift.io

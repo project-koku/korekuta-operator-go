@@ -5,7 +5,7 @@ metadata:
   name: costmanagementmetricsconfig-editor-role
 rules:
 - apiGroups:
-  - costmanagement-metrics-cfg.openshift.io
+  - cost-mgmt-metrics-cfg.openshift.io
   resources:
   - kokumetricsconfigs
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - costmanagement-metrics-cfg.openshift.io
+  - cost-mgmt-metrics-cfg.openshift.io
   resources:
   - costmanagementmetricsconfigs/status
   verbs:
