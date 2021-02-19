@@ -155,7 +155,7 @@ func testPrometheusConnection(promConn prometheusConnection) error {
 
 // GetPromConn returns the prometheus connection
 func (c *PromCollector) GetPromConn(kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig) error {
-	log := c.Log.WithValues("costmanagmentmetricsconfig", "GetPromConn")
+	log := c.Log.WithValues("costmanagementmetricsconfig", "GetPromConn")
 	var err error
 
 	updated := true
@@ -194,7 +194,7 @@ func (c *PromCollector) GetPromConn(kmCfg *kokumetricscfgv1beta1.CostManagementM
 }
 
 func (c *PromCollector) getQueryResults(queries *querys, results *mappedResults) error {
-	log := c.Log.WithValues("costmanagmentmetricsconfig", "getQueryResults")
+	log := c.Log.WithValues("costmanagementmetricsconfig", "getQueryResults")
 	for _, query := range *queries {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()

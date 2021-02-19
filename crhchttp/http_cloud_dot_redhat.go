@@ -103,7 +103,7 @@ func GetMultiPartBodyAndHeaders(filename string) (*bytes.Buffer, string, error) 
 
 // SetupRequest creates a new request, adds headers to request object for communication to cloud.redhat.com, and returns the request
 func SetupRequest(authConfig *AuthConfig, contentType, method, uri string, body *bytes.Buffer) (*http.Request, error) {
-	log := authConfig.Log.WithValues("costmanagmentmetricsconfig", "SetupRequest")
+	log := authConfig.Log.WithValues("costmanagementmetricsconfig", "SetupRequest")
 
 	req, err := http.NewRequestWithContext(context.Background(), method, uri, body)
 	if err != nil {
@@ -135,7 +135,7 @@ func SetupRequest(authConfig *AuthConfig, contentType, method, uri string, body 
 
 // GetClient Return client with certificate handling based on configuration
 func GetClient(authConfig *AuthConfig) HTTPClient {
-	log := authConfig.Log.WithValues("costmanagmentmetricsconfig", "GetClient")
+	log := authConfig.Log.WithValues("costmanagementmetricsconfig", "GetClient")
 	transport := DefaultTransport
 	if authConfig.ValidateCert {
 		// create the client specifying the ca cert file for transport
@@ -154,7 +154,7 @@ func GetClient(authConfig *AuthConfig) HTTPClient {
 
 // ProcessResponse Log response for request and return valid
 func ProcessResponse(logger logr.Logger, resp *http.Response) ([]byte, error) {
-	log := logger.WithValues("costmanagmentmetricsconfig", "ProcessResponse")
+	log := logger.WithValues("costmanagementmetricsconfig", "ProcessResponse")
 	log.Info("request response",
 		"method", resp.Request.Method,
 		"status", resp.StatusCode,
@@ -185,7 +185,7 @@ func ProcessResponse(logger logr.Logger, resp *http.Response) ([]byte, error) {
 
 // Upload Send data to cloud.redhat.com
 func Upload(authConfig *AuthConfig, contentType, method, uri string, body *bytes.Buffer) (string, metav1.Time, error) {
-	log := authConfig.Log.WithValues("costmanagmentmetricsconfig", "Upload")
+	log := authConfig.Log.WithValues("costmanagementmetricsconfig", "Upload")
 	currentTime := metav1.Now()
 	req, err := SetupRequest(authConfig, contentType, method, uri, body)
 	if err != nil {

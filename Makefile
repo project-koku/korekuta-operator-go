@@ -2,7 +2,7 @@
 UPSTREAM_API = KokuMetricsConfig
 DOWNSTREAM_API = CostManagementMetricsConfig
 UPSTREAM_LOWERCASE = kokumetricsconfig
-DOWNSTREAM_LOWERCASE = costmanagmentmetricsconfig
+DOWNSTREAM_LOWERCASE = costmanagementmetricsconfig
 UPSTREAM_HYPHEN = koku-metrics-cfg
 DOWNSTREAM_HYPHEN = cost-mgmt-metrics-cfg
 REMOVE_FILES = testutils/ koku-metrics-operator/ hack/ scripts/ testing/ api/v1alpha1 collector/test_files/ collector/*_test.go controllers/test_files/ controllers/*_test.go dirconfig/test_files/ dirconfig/*_test.go packaging/test_files/ packaging/*_test.go sources/*_test.go storage/test_files/ storage/*_test.go strset/*_test.go cover.out

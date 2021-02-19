@@ -461,7 +461,7 @@ type CostManagementMetricsConfigStatus struct {
 // +kubebuilder:storageversion
 // +kubebuilder:resource:scope=Namespaced
 
-// CostManagementMetricsConfig is the Schema for the costmanagmentmetricsconfig API
+// CostManagementMetricsConfig is the Schema for the costmanagementmetricsconfig API
 type CostManagementMetricsConfig struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

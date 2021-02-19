@@ -447,7 +447,7 @@ func packageFiles(p *packaging.FilePackager) {
 }
 
 func uploadFiles(r *CostManagementMetricsConfigReconciler, authConfig *crhchttp.AuthConfig, kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig, dirCfg *dirconfig.DirectoryConfig) error {
-	log := r.Log.WithValues("costmanagmentmetricsconfig", "uploadFiles")
+	log := r.Log.WithValues("costmanagementmetricsconfig", "uploadFiles")
 
 	// if its time to upload/package
 	if !*kmCfg.Spec.Upload.UploadToggle {
@@ -545,7 +545,7 @@ func collectPromStats(r *CostManagementMetricsConfigReconciler, kmCfg *kokumetri
 
 func configurePVC(r *CostManagementMetricsConfigReconciler, req ctrl.Request, kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig) (*ctrl.Result, error) {
 	ctx := context.Background()
-	log := r.Log.WithValues("costmanagmentmetricsconfig", "configurePVC")
+	log := r.Log.WithValues("costmanagementmetricsconfig", "configurePVC")
 	pvcTemplate := kmCfg.Spec.VolumeClaimTemplate
 	if pvcTemplate == nil {
 		pvcTemplate = &storage.DefaultPVC
@@ -586,8 +586,8 @@ func configurePVC(r *CostManagementMetricsConfigReconciler, req ctrl.Request, km
 	return nil, nil
 }
 
-// +kubebuilder:rbac:groups=cost-mgmt-metrics-cfg.openshift.io,namespace=koku-metrics-operator,resources=costmanagmentmetricsconfigs,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=cost-mgmt-metrics-cfg.openshift.io,namespace=koku-metrics-operator,resources=costmanagmentmetricsconfigs/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=cost-mgmt-metrics-cfg.openshift.io,namespace=koku-metrics-operator,resources=costmanagementmetricsconfigs,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cost-mgmt-metrics-cfg.openshift.io,namespace=koku-metrics-operator,resources=costmanagementmetricsconfigs/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=operators.coreos.com,namespace=koku-metrics-operator,resources=clusterserviceversions,verbs=get;list;watch;update;patch
 // +kubebuilder:rbac:groups=config.openshift.io,resources=clusterversions,verbs=get;list;watch
 // +kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch

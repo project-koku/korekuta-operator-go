@@ -123,7 +123,7 @@ func (r *mappedResults) iterateMatrix(matrix model.Matrix, q query) {
 
 // GenerateReports is responsible for querying prometheus and writing to report files
 func GenerateReports(kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig, dirCfg *dirconfig.DirectoryConfig, c *PromCollector) error {
-	log := c.Log.WithValues("costmanagmentmetricsconfig", "GenerateReports")
+	log := c.Log.WithValues("costmanagementmetricsconfig", "GenerateReports")
 
 	// yearMonth is used in filenames
 	yearMonth := c.TimeSeries.Start.Format("200601") // this corresponds to YYYYMM format
@@ -167,7 +167,7 @@ func GenerateReports(kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig, d
 			prefix:    emptyNodeRow.dateTimes.string(),
 		},
 	}
-	c.Log.WithValues("costmanagmentmetricsconfig", "writeResults").Info("writing node results to file", "filename", nodeReport.file.getName())
+	c.Log.WithValues("costmanagementmetricsconfig", "writeResults").Info("writing node results to file", "filename", nodeReport.file.getName())
 	if err := nodeReport.writeReport(); err != nil {
 		return fmt.Errorf("failed to write node report: %v", err)
 	}
@@ -207,7 +207,7 @@ func GenerateReports(kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig, d
 			prefix:    emptyPodRow.dateTimes.string(),
 		},
 	}
-	c.Log.WithValues("costmanagmentmetricsconfig", "writeResults").Info("writing pod results to file", "filename", podReport.file.getName())
+	c.Log.WithValues("costmanagementmetricsconfig", "writeResults").Info("writing pod results to file", "filename", podReport.file.getName())
 	if err := podReport.writeReport(); err != nil {
 		return fmt.Errorf("failed to write pod report: %v", err)
 	}
@@ -239,7 +239,7 @@ func GenerateReports(kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig, d
 			prefix:    emptyVolRow.dateTimes.string(),
 		},
 	}
-	c.Log.WithValues("costmanagmentmetricsconfig", "writeResults").Info("writing volume results to file", "filename", volReport.file.getName())
+	c.Log.WithValues("costmanagementmetricsconfig", "writeResults").Info("writing volume results to file", "filename", volReport.file.getName())
 	if err := volReport.writeReport(); err != nil {
 		return fmt.Errorf("failed to write volume report: %v", err)
 	}
@@ -271,7 +271,7 @@ func GenerateReports(kmCfg *kokumetricscfgv1beta1.CostManagementMetricsConfig, d
 			prefix:    emptyNameRow.dateTimes.string(),
 		},
 	}
-	c.Log.WithValues("costmanagmentmetricsconfig", "writeResults").Info("writing namespace results to file", "filename", namespaceReport.file.getName())
+	c.Log.WithValues("costmanagementmetricsconfig", "writeResults").Info("writing namespace results to file", "filename", namespaceReport.file.getName())
 	if err := namespaceReport.writeReport(); err != nil {
 		return fmt.Errorf("failed to write namespace report: %v", err)
 	}

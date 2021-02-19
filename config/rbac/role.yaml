@@ -69,7 +69,7 @@ rules:
 - apiGroups:
   - cost-mgmt-metrics-cfg.openshift.io
   resources:
-  - costmanagmentmetricsconfigs
+  - costmanagementmetricsconfigs
   verbs:
   - create
   - delete
@@ -81,7 +81,7 @@ rules:
 - apiGroups:
   - cost-mgmt-metrics-cfg.openshift.io
   resources:
-  - costmanagmentmetricsconfigs/status
+  - costmanagementmetricsconfigs/status
   verbs:
   - get
   - patch

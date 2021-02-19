@@ -83,7 +83,7 @@ type Storage struct {
 
 func (s *Storage) getOrCreateVolume() error {
 	ctx := context.Background()
-	log := s.Log.WithValues("costmanagmentmetricsconfig", "getOrCreateVolume")
+	log := s.Log.WithValues("costmanagementmetricsconfig", "getOrCreateVolume")
 	namespace := types.NamespacedName{
 		Namespace: s.Namespace,
 		Name:      s.PVC.Name}
@@ -140,7 +140,7 @@ func (s *Storage) mountVolume(dep *appsv1.Deployment, depSpec *appsv1.Deployment
 // ConvertVolume converts the EmptyDir volume in deployment to PVC
 func (s *Storage) ConvertVolume() (bool, error) {
 	ctx := context.Background()
-	log := s.Log.WithValues("costmanagmentmetricsconfig", "ConvertVolume")
+	log := s.Log.WithValues("costmanagementmetricsconfig", "ConvertVolume")
 
 	log.Info("getting deployment")
 	deployment := &appsv1.Deployment{}
