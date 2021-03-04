@@ -3,9 +3,9 @@ FROM gcr.io/gcp-runtimes/go1-builder:1.13 as builder
 
 WORKDIR /workspace
 COPY . .
-COPY .git .git
 # Build
 RUN GIT_COMMIT=$(git rev-list -1 HEAD) && \
+echo " injecting GIT COMMIT: $GIT_COMMIT" && \
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on \
 /usr/local/go/bin/go build -ldflags "-X github.com/project-koku/koku-metrics-operator/controllers.GitCommit=$GIT_COMMIT" -mod vendor -a -o manager main.go
 
