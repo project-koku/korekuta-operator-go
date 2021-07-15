@@ -40,6 +40,14 @@ type FilePackager struct {
 	maxBytes         int64
 	start            time.Time
 	end              time.Time
+	Mapping          map[string]FileMapping
+}
+
+type FileMapping struct {
+	TarName     string   `json:"tarName"`
+	UploadFiles []string `json:"uploadFiles"`
+	ManifestID  string   `json:"manifest"`
+	ClusterID   string   `json:"cluster_id"`
 }
 
 const timestampFormat = "20060102T150405"
@@ -79,6 +87,8 @@ type manifestInfo struct {
 	manifest Manifest
 	filename string
 }
+
+var fileInfo = make(map[string]FileMapping)
 
 // renderManifest writes the manifest
 func (m *manifestInfo) renderManifest() error {
@@ -161,8 +171,6 @@ func (p *FilePackager) addFileToTarWriter(uploadName, filePath string, tarWriter
 
 // writeTarball packages the files into tar balls
 func (p *FilePackager) writeTarball(tarFileName, manifestFileName string, archiveFiles map[int]string) error {
-
-	// create the tarfile
 	tarFile, err := os.Create(tarFileName)
 	if err != nil {
 		return fmt.Errorf("writeTarball: error creating tar file: %v", err)
@@ -175,14 +183,28 @@ func (p *FilePackager) writeTarball(tarFileName, manifestFileName string, archiv
 	defer tw.Close()
 
 	// add the files to the tarFile
+	var files []string
+	files = append(files, manifestFileName)
 	for idx, filePath := range archiveFiles {
 		if strings.HasSuffix(filePath, ".csv") {
 			uploadName := p.uid + "_openshift_usage_report." + strconv.Itoa(idx) + ".csv"
+			files = append(files, uploadName)
 			if err := p.addFileToTarWriter(uploadName, filePath, tw); err != nil {
 				return fmt.Errorf("writeTarball: failed to create tar file: %v", err)
 			}
+		} else {
+			files = append(files, filePath)
 		}
 	}
+	fileName := strings.Split(tarFileName, "/upload/")[1]
+	fileMap := &FileMapping{
+		TarName:     fileName,
+		ManifestID:  p.uid,
+		ClusterID:   p.KMCfg.Status.ClusterID,
+		UploadFiles: files,
+	}
+	p.Mapping = fileInfo
+	p.Mapping[fileName] = *fileMap
 	if err := p.addFileToTarWriter("manifest.json", manifestFileName, tw); err != nil {
 		return fmt.Errorf("writeTarball: failed to create tar file: %v", err)
 	}
